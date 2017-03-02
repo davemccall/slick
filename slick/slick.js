@@ -1699,7 +1699,10 @@
                 image
                     .attr( 'src', imageSource )
                     .removeAttr('data-lazy data-srcset data-sizes')
-                    .removeClass('slick-loading');
+                    .removeClass('slick-loading')
+                    .css("height", 0);
+
+                image.css("height", "auto"); /* workaround to resize the image */
 
                 if ( _.options.adaptiveHeight === true ) {
                     _.setPosition();
