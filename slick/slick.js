@@ -247,7 +247,10 @@
             var targetHeight = _.$slides.eq(_.currentSlide).outerHeight(true);
             _.$list.animate({
                 height: targetHeight
-            }, _.options.speed);
+            }, {
+                duration: _.options.speed,
+                queue: false
+            });
         }
     };
 
@@ -1111,7 +1114,8 @@
         if (_.options.vertical === false) {
             targetLeft = ((slideIndex * _.slideWidth) * -1) + _.slideOffset;
         } else {
-            targetLeft = ((slideIndex * verticalHeight) * -1) + verticalOffset;
+            // DTM - targetLeft = ((slideIndex * verticalHeight) * -1) + verticalOffset;
+            targetLeft = _.$slides.eq(slideIndex).position().top * -1;
         }
 
         if (_.options.variableWidth === true) {
@@ -1969,7 +1973,15 @@
                 });
             }
         } else {
-            _.$list.height(_.$slides.first().outerHeight(true) * _.options.slidesToShow);
+            var targetHeight = 0;
+            for (var i = 0; i < _.options.slidesToShow; i++)
+                targetHeight += _.$slides.eq(_.currentSlide + i).outerHeight(true);
+            _.$list.animate({
+                height: targetHeight
+            }, {
+                duration: _.options.speed / 2,
+                queue: false
+            });
             if (_.options.centerMode === true) {
                 _.$list.css({
                     padding: (_.options.centerPadding + ' 0px')
@@ -2518,6 +2530,15 @@
         }
 
         if (dontAnimate !== true) {
+            if (_.options.vertical === true && _.options.adaptiveHeight === true) {
+                var targetHeight = 0;
+                for (var i = 0; i < _.options.slidesToShow; i++)
+                    targetHeight += _.$slides.eq(_.currentSlide + i).outerHeight(true);
+                _.$list.animate({ height: targetHeight }, {
+                    duration: _.options.speed / 2,
+                    queue: false
+                });
+            }
             _.animateSlide(targetLeft, function() {
                 _.postSlide(animSlide);
             });
